@@ -1,0 +1,31 @@
+#!Bash
+# 1. Spin up the localized laboratory environment
+docker compose build --no-cache
+docker compose up -d
+
+# 2. Verify that the RAM volumes and port tunnels are working cleanly
+docker compose ps
+curl http://localhost:8080
+
+# 3. Simulate an edge sensor blasting raw UDP data down the throat of the catcher sieve
+echo "FRAME_DATA:Accretion_Matrix_Delta_006" | nc -u -w1 localhost 9999
+
+# 4. Initialize, commit, and sync your master files to GitHub
+git init
+git add docker-compose.yml node_c_daemon/ shared_volume/
+git commit -m "feat: deploy isolated kerbtap framework prototype v5.0 with volatile memory mapping"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/kerbtap-lab.git
+git push -u origin main
+
+
+#Filestructure
+#======================================
+kerbtap-lab/
+├── docker-compose.yml
+└── node_c_daemon/
+    ├── Dockerfile
+    ├── app.py
+    ├── entrypoint.sh
+    └── templates/
+        └── index.html

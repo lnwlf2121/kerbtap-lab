@@ -1,0 +1,25 @@
+services:
+  kerbtap_node_c:
+    build:
+      context: ./node_c_daemon
+      dockerfile: Dockerfile
+    container_name: kerbtap_core_node
+    restart: unless-stopped
+    ports:
+      - "8080:8080"      # Web Dashboard & Storybook Portal
+      - "9999:9999/udp"  # Raw Ingress UDP Sieve for telemetry
+    tmpfs:
+      - /tmp/kerbtap-spool:size=128M
+      - /tmp/nntpfusemount:size=128M
+    environment:
+      - NODE_ROLE=C_CONDUCTOR
+      - PROTOCOL_VERSION=5.0
+      - FEC_DELAY_MS=3
+      - PYTHONUNBUFFERED=1 # Prevents Python from swallowing logs in the black box
+    networks:
+      - chromalon_mesh
+
+networks:
+  chromalon_mesh:
+    name: chromalon_decentralized_network
+    driver: bridge

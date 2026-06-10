@@ -47,6 +47,30 @@ def api_telemetry():
         "active_frames": latest_ingress_frames
     })
 
+
+@app.route('/api/provision_test_account', methods=['POST'])
+def provision_test_account():
+    """
+    Enables the mobile phone webapp interface to pass temporary, short-lived 
+    test tokens down to the FUSE driver layer for instant network verification loops.
+    """
+    from flask import request
+    request_data = request.get_json() or {}
+    
+    temp_user = request_data.get("test_username", "anonymous")
+    temp_group = request_data.get("test_group", "alt.test")
+    
+    # Dynamically inject the temporary runtime markers into the system context
+    os.environ["USENET_USER"] = temp_user
+    os.environ["USENET_GROUP"] = temp_group
+    
+    print(f"[006 CHROMALON FORGE] WebApp Handshake: Provisioned transient test group reference: {temp_group}", flush=True)
+    return jsonify({
+        "status": "PROVISION_SUCCESS",
+        "active_mesh_target": temp_group,
+        "mode": "DEMO_LOOPBACK_ACTIVE"
+    })
+
 @app.route('/')
 def dashboard():
     # Embedding the client-side show-and-tell interface directly to keep the deployment completely self-contained
